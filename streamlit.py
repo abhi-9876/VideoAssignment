@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import seaborn as sns
+import plotly.express as px
 from sklearn.metrics import classification_report
 
 # Load datasets from URLs
@@ -39,10 +39,9 @@ if view == "Raw Data Distribution":
     numerical_columns = df_raw.select_dtypes(include=[np.number]).columns
     column = st.selectbox("Select a column to visualize:", numerical_columns)
     
-    # Histogram for raw data using seaborn
-    st.subheader(f"Distribution of {column} (Raw Data)")
-    sns.histplot(df_raw[column].dropna(), kde=True, bins=20, color="skyblue")
-    st.pyplot()
+    # Create histogram for raw data using plotly
+    fig = px.histogram(df_raw, x=column, nbins=20, title=f"Distribution of {column} (Raw Data)", histnorm='percent')
+    st.plotly_chart(fig)
 
 # Preprocessed data distribution
 elif view == "Preprocessed Data Distribution":
@@ -56,10 +55,9 @@ elif view == "Preprocessed Data Distribution":
     numerical_columns = df_preprocessed.select_dtypes(include=[np.number]).columns
     column = st.selectbox("Select a column to visualize:", numerical_columns)
     
-    # Histogram for preprocessed data using seaborn
-    st.subheader(f"Distribution of {column} (Preprocessed Data)")
-    sns.histplot(df_preprocessed[column].dropna(), kde=True, bins=20, color="green")
-    st.pyplot()
+    # Create histogram for preprocessed data using plotly
+    fig = px.histogram(df_preprocessed, x=column, nbins=20, title=f"Distribution of {column} (Preprocessed Data)", histnorm='percent')
+    st.plotly_chart(fig)
 
 # Model performance metrics
 elif view == "Model Performance Metrics":
@@ -89,10 +87,15 @@ elif view == "Model Performance Metrics":
         "Processed Data": 0.85  # Example accuracy for processed data
     }
 
-    sns.barplot(x=list(accuracies.keys()), y=list(accuracies.values()), palette="Set2")
-    plt.title("Accuracy Comparison")
-    plt.ylim(0, 1)
-    st.pyplot()
+    # Create bar plot for accuracy comparison using plotly
+    fig = px.bar(
+        x=list(accuracies.keys()),
+        y=list(accuracies.values()),
+        title="Accuracy Comparison",
+        labels={'x': 'Data Type', 'y': 'Accuracy'},
+        color=list(accuracies.values())
+    )
+    st.plotly_chart(fig)
 
 # Footer
 st.sidebar.markdown("""---
