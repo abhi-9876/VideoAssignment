@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
+import plotly.graph_objects as go
 from sklearn.metrics import classification_report
 
 # Load datasets from URLs
@@ -39,9 +39,12 @@ if view == "Raw Data Distribution":
     numerical_columns = df_raw.select_dtypes(include=[np.number]).columns
     column = st.selectbox("Select a column to visualize:", numerical_columns)
     
-    # Create histogram for raw data using plotly
-    fig = px.histogram(df_raw, x=column, nbins=20, title=f"Distribution of {column} (Raw Data)", histnorm='percent')
-    st.plotly_chart(fig)
+    # Create histogram for raw data using plotly.graph_objects
+    hist_data = df_raw[column].dropna()
+    hist_fig = go.Figure()
+    hist_fig.add_trace(go.Histogram(x=hist_data, nbinsx=20, name=f"Distribution of {column} (Raw Data)"))
+    hist_fig.update_layout(title=f"Distribution of {column} (Raw Data)", xaxis_title=column, yaxis_title="Frequency")
+    st.plotly_chart(hist_fig)
 
 # Preprocessed data distribution
 elif view == "Preprocessed Data Distribution":
@@ -55,9 +58,12 @@ elif view == "Preprocessed Data Distribution":
     numerical_columns = df_preprocessed.select_dtypes(include=[np.number]).columns
     column = st.selectbox("Select a column to visualize:", numerical_columns)
     
-    # Create histogram for preprocessed data using plotly
-    fig = px.histogram(df_preprocessed, x=column, nbins=20, title=f"Distribution of {column} (Preprocessed Data)", histnorm='percent')
-    st.plotly_chart(fig)
+    # Create histogram for preprocessed data using plotly.graph_objects
+    hist_data = df_preprocessed[column].dropna()
+    hist_fig = go.Figure()
+    hist_fig.add_trace(go.Histogram(x=hist_data, nbinsx=20, name=f"Distribution of {column} (Preprocessed Data)"))
+    hist_fig.update_layout(title=f"Distribution of {column} (Preprocessed Data)", xaxis_title=column, yaxis_title="Frequency")
+    st.plotly_chart(hist_fig)
 
 # Model performance metrics
 elif view == "Model Performance Metrics":
@@ -87,15 +93,16 @@ elif view == "Model Performance Metrics":
         "Processed Data": 0.85  # Example accuracy for processed data
     }
 
-    # Create bar plot for accuracy comparison using plotly
-    fig = px.bar(
+    # Create bar plot for accuracy comparison using plotly.graph_objects
+    bar_fig = go.Figure()
+    bar_fig.add_trace(go.Bar(
         x=list(accuracies.keys()),
         y=list(accuracies.values()),
-        title="Accuracy Comparison",
-        labels={'x': 'Data Type', 'y': 'Accuracy'},
-        color=list(accuracies.values())
-    )
-    st.plotly_chart(fig)
+        name="Accuracy Comparison",
+        marker=dict(color='rgba(55, 128, 191, 0.7)'),
+    ))
+    bar_fig.update_layout(title="Accuracy Comparison", xaxis_title="Data Type", yaxis_title="Accuracy")
+    st.plotly_chart(bar_fig)
 
 # Footer
 st.sidebar.markdown("""---
