@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import classification_report
 
-# Load datasets
+# Load datasets from URLs
 df_raw = pd.read_csv("https://raw.githubusercontent.com/abhi-9876/VideoAssignment/refs/heads/main/employee_performance_data.csv")
 df_preprocessed = pd.read_csv("https://raw.githubusercontent.com/abhi-9876/VideoAssignment/refs/heads/main/employee_performance_data_preprocessed.csv")
 
@@ -40,11 +39,10 @@ if view == "Raw Data Distribution":
     numerical_columns = df_raw.select_dtypes(include=[np.number]).columns
     column = st.selectbox("Select a column to visualize:", numerical_columns)
     
-    # Histogram
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.histplot(df_raw[column].dropna(), kde=True, bins=20, color="skyblue", ax=ax)
-    ax.set_title(f"Distribution of {column} (Raw Data)")
-    st.pyplot(fig)
+    # Histogram for raw data using seaborn
+    st.subheader(f"Distribution of {column} (Raw Data)")
+    sns.histplot(df_raw[column].dropna(), kde=True, bins=20, color="skyblue")
+    st.pyplot()
 
 # Preprocessed data distribution
 elif view == "Preprocessed Data Distribution":
@@ -58,17 +56,16 @@ elif view == "Preprocessed Data Distribution":
     numerical_columns = df_preprocessed.select_dtypes(include=[np.number]).columns
     column = st.selectbox("Select a column to visualize:", numerical_columns)
     
-    # Histogram
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.histplot(df_preprocessed[column].dropna(), kde=True, bins=20, color="green", ax=ax)
-    ax.set_title(f"Distribution of {column} (Preprocessed Data)")
-    st.pyplot(fig)
+    # Histogram for preprocessed data using seaborn
+    st.subheader(f"Distribution of {column} (Preprocessed Data)")
+    sns.histplot(df_preprocessed[column].dropna(), kde=True, bins=20, color="green")
+    st.pyplot()
 
 # Model performance metrics
 elif view == "Model Performance Metrics":
     st.header("Model Performance Metrics")
     
-    # Enter classification report
+    # Example classification reports (replace with actual model predictions)
     raw_metrics = classification_report(
         [1, 0, 1, 0],  # Example true values
         [1, 0, 0, 0],  # Example predicted values for raw data
@@ -86,17 +83,16 @@ elif view == "Model Performance Metrics":
     st.subheader("Processed Data Metrics")
     st.table(pd.DataFrame(processed_metrics).transpose())
 
-    # Comparison of accuracies
+    # Accuracy comparison
     accuracies = {
         "Raw Data": 0.75,  # Example accuracy for raw data
         "Processed Data": 0.85  # Example accuracy for processed data
     }
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-    sns.barplot(x=list(accuracies.keys()), y=list(accuracies.values()), palette="Set2", ax=ax)
-    ax.set_title("Accuracy Comparison")
-    ax.set_ylim(0, 1)
-    st.pyplot(fig)
+    sns.barplot(x=list(accuracies.keys()), y=list(accuracies.values()), palette="Set2")
+    plt.title("Accuracy Comparison")
+    plt.ylim(0, 1)
+    st.pyplot()
 
 # Footer
 st.sidebar.markdown("""---
